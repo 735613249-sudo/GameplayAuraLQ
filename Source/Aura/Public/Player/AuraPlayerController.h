@@ -10,6 +10,7 @@
 class UInputMappingContext;		// 增强输入的“规则集”（告诉游戏：哪个按键对应哪个操作）
 class UInputAction;				// 输入动作（比如“移动”这个动作）
 struct FInputActionValue;		// 输入动作的数值（比如按W键时，数值是1；按S是-1）
+class IEnemyInterface;
 
 
 /**
@@ -22,6 +23,7 @@ class AURA_API AAuraPlayerController : public APlayerController
 	
 public:
 	AAuraPlayerController();				// 构造函数的“声明”（具体实现写在.cpp里）
+	virtual void PlayerTick(float DeltaTime) override;
 protected:
 	// 重写虚幻自带的两个函数（相当于“修改父类的默认行为”）
 	virtual void BeginPlay() override;				//虚拟的 声明BeginPlaye()函数 覆盖，游戏开始时执行的函数
@@ -34,6 +36,9 @@ private:
 	TObjectPtr<UInputAction> MoveAction;			// “移动”这个输入动作（比如WASD/摇杆对应这个动作）
 	
 	// 处理移动的函数（声明）：收到输入后，让角色移动
-	void Move(const FInputActionValue & InputActionValue);
+	void Move(const FInputActionValue& InputActionValue);
 	
+	void CursorTrace();
+	IEnemyInterface* LastActor;
+	IEnemyInterface* ThisActor;
 };

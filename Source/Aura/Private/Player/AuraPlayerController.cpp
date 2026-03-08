@@ -4,10 +4,76 @@
 #include "Player/AuraPlayerController.h"		// 引入自己的头文件（必须）
 #include "EnhancedInputSubsystems.h"			// 引入增强输入的子系统头文件（处理输入规则的核心）
 #include "EnhancedInputComponent.h"				// 引入增强输入组件头文件（绑定按键的核心）
+#include "Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;							// 开启网络同步（多人游戏时，控制器状态同步给其他玩家）
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+	
+	CursorTrace();
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility,false,CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+	
+	LastActor = ThisActor;
+	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+	
+	/**
+	 * Line trace from cursor. There are several scenarios：
+	 * A. LastActor is null && ThisActor is null
+	 *		- Do nothing
+	 * B. LastActor is null && ThisActor is valid
+	 *		- Highlight ThisActor
+	 * C. LastActor is valid && ThisActor is null
+	 *		- UnHighlight LastActor
+	 * D. Both actors are valid, but LastActor != ThisActor
+	 *		- UnHighlight LastActor and Highlight ThisActor
+	 * E. Both actors are valid, and are the same actor
+	 *		- Do nothing
+	 */
+
+	if (LastActor == nullptr)		//不等于空指针
+	{
+		if (ThisActor != nullptr)
+		{
+			// Case B
+			ThisActor->HighlightActor();
+		}
+		else
+		{
+			// Case A - both are null, do nothing
+		}
+	}
+	else	// LastActor is valid
+	{
+		if (ThisActor == nullptr)
+		{
+			// Case C
+			LastActor->UnHighlightActor();
+		}
+		else	// both actors are valid
+		{
+			if (LastActor != ThisActor)
+			{
+				// Case D
+				LastActor->UnHighlightActor();
+				ThisActor->HighlightActor();
+			}
+			else
+			{
+				// Case E - do nothing
+			}
+		}
+	}
 }
 
 // BeginPlay的实现：游戏开始（玩家进入世界）时执行
@@ -41,8 +107,8 @@ void AAuraPlayerController::SetupInputComponent()
 	// 把默认输入组件转成“增强输入组件”（强制转换，确保类型对）
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 	
-	// 绑定：当“MoveAction”这个输入动作被“按下（Started）”时，调用当前类的Move函数
-	EnhancedInputComponent->BindAction(MoveAction,ETriggerEvent::Started,this,&AAuraPlayerController::Move);
+	// 绑定：当“MoveAction”这个输入动作被“按下（Triggered）”时，调用当前类的Move函数
+	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered,this,&AAuraPlayerController::Move);
 }
 
 // Move函数的实现：处理移动输入（核心！按WASD让角色移动）
@@ -67,3 +133,5 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
 }
+
+
