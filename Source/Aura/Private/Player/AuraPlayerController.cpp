@@ -85,8 +85,10 @@ void AAuraPlayerController::BeginPlay()
 	//本地指针子系统 增强输入系统
 	// 1. 启用增强输入的“规则集”（AuraContext），获取本地玩家的“增强输入子系统”（管理输入规则的核心模块）
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	check(Subsystem);											// 检查子系统是否有效
-	Subsystem->AddMappingContext(AuraContext,0);		// 添加规则集，优先级0（数字越小优先级越高）
+	if (Subsystem)
+	{
+		Subsystem->AddMappingContext(AuraContext,0);		// 添加规则集，优先级0（数字越小优先级越高）
+	}
 	
 	// 2. 设置鼠标光标
 	bShowMouseCursor = true;		// 显示鼠标光标（比如RPG游戏需要点UI，就要显示光标）

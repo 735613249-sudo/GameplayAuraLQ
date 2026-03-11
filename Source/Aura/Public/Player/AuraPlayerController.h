@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"		// 引入虚幻自带的“玩家控制器”基类
 #include "AuraPlayerController.generated.h"		// 虚幻自动生成的头文件（反射用）
 
+
 // 提前声明类（避免重复包含，简化编译）
 class UInputMappingContext;		// 增强输入的“规则集”（告诉游戏：哪个按键对应哪个操作）
 class UInputAction;				// 输入动作（比如“移动”这个动作）
@@ -39,6 +40,6 @@ private:
 	void Move(const FInputActionValue& InputActionValue);
 	
 	void CursorTrace();
-	IEnemyInterface* LastActor;
-	IEnemyInterface* ThisActor;
+	TWeakInterfacePtr<IEnemyInterface> LastActor;
+	TWeakInterfacePtr<IEnemyInterface> ThisActor;
 };
