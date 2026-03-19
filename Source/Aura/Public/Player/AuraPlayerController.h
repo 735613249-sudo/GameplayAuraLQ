@@ -40,6 +40,6 @@ private:
 	void Move(const FInputActionValue& InputActionValue);
 	
 	void CursorTrace();
-	TWeakInterfacePtr<IEnemyInterface> LastActor;
-	TWeakInterfacePtr<IEnemyInterface> ThisActor;
+	IEnemyInterface* LastActor;
+	IEnemyInterface* ThisActor;
 };
