@@ -2,11 +2,19 @@
 
 
 #include "AuraAssetManager.h"
+#include "AuraGameplayTags.h"
 
-UAuraAssetManager* UAuraAssetManager::Get()
+UAuraAssetManager& UAuraAssetManager::Get()
 {
 	check(GEngine);
 	
 	UAuraAssetManager* AuraAssetManager = Cast<UAuraAssetManager>(GEngine->AssetManager);
-	return &*AuraAssetManager;	//老师的是：return *AuraAssetManager
+	return *AuraAssetManager;
+}
+
+void UAuraAssetManager::StartInitialLoading()
+{
+	Super::StartInitialLoading();
+	
+	FAuraGameplayTags::InitializeNativeGameplayTags();
 }
