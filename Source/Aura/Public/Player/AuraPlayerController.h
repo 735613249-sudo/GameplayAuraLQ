@@ -4,15 +4,17 @@
 
 #include "CoreMinimal.h"		// 虚幻最核心的基础头文件
 #include "GameFramework/PlayerController.h"		// 引入虚幻自带的“玩家控制器”基类
+#include "GameplayTagContainer.h"
 #include "AuraPlayerController.generated.h"		// 虚幻自动生成的头文件（反射用）
-
 
 // 提前声明类（避免重复包含，简化编译）
 class UInputMappingContext;		// 增强输入的“规则集”（告诉游戏：哪个按键对应哪个操作）
 class UInputAction;				// 输入动作（比如“移动”这个动作）
 struct FInputActionValue;		// 输入动作的数值（比如按W键时，数值是1；按S是-1）
 class IEnemyInterface;
-
+class UAuraInputConfig;
+class UAuraAbilitySystemComponent;
+class USplineComponent;
 
 /**
  * 
@@ -42,4 +44,28 @@ private:
 	void CursorTrace();
 	IEnemyInterface* LastActor;
 	IEnemyInterface* ThisActor;
+	
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UAuraInputConfig> InputConfig;
+	
+	UPROPERTY()
+	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+	
+	UAuraAbilitySystemComponent* GetASC();
+	
+	FVector CachedDestination = FVector::ZeroVector;
+	float FollowTime = 0.f;
+	float ShortPressThreshold = 0.5f;
+	bool bAutoRunning = false;
+	bool bTargeting = false;
+	
+	UPROPERTY(EditDefaultsOnly)
+	float AutoRunAcceptanceRadius = 50.f;
+	
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USplineComponent> Spline;
 };
