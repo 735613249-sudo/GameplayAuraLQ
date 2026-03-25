@@ -38,6 +38,13 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;			// “移动”这个输入动作（比如WASD/摇杆对应这个动作）
 	
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> ShiftAction;
+	
+	void ShiftPressed()	{ bShiftKeyDown = true; }
+	void ShiftReleased() { bShiftKeyDown = false; }
+	bool bShiftKeyDown = false;
+	
 	// 处理移动的函数（声明）：收到输入后，让角色移动
 	void Move(const FInputActionValue& InputActionValue);
 	
