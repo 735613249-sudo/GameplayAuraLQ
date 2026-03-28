@@ -14,5 +14,6 @@ public class AuraEditorTarget : TargetRules
 		
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_6;
 		bDebugBuildsActuallyUseDebugCRT = false;
+		
 	}
 }

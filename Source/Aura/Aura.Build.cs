@@ -6,12 +6,6 @@ public class Aura : ModuleRules
 {
 	public Aura(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-		// 强制启用批量编译，优先级高于UE默认配置
-		bUseUnity = true;
-		
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayAbilities" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "GameplayTags", "GameplayTasks", "NavigationSystem", "Niagara" });
@@ -23,5 +17,17 @@ public class Aura : ModuleRules
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
 
 		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+		
+		// 禁用无用优化，极速链接
+		OptimizeCode = CodeOptimization.Never;
+		bUseRTTI = false;
+		bEnableExceptions = false;
+		
+		// 核心编译加速
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		bUseUnity = true;
+		MinFilesUsingPrecompiledHeaderOverride = 1;
+		// 禁用警告作为错误（减少编译检查）
+		bWarningsAsErrors = false;
 	}
 }
