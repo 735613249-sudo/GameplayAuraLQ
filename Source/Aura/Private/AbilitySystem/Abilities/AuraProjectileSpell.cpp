@@ -65,7 +65,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		
 		// ========== 核心：设置动态伤害值，标准赋值，动态伤害 + 正确传参 ========== 	
 		const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
-		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+		const float ScaledDamage = Damage.GetValueAtLevel(10);		//参数里是GetAbilityLevel()
 		FName DamageDataName = GameplayTags.Damage.GetTagName();
 		UAbilitySystemBlueprintLibrary::AssignSetByCallerMagnitude(SpecHandle, DamageDataName, ScaledDamage);
 		

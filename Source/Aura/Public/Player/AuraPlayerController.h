@@ -7,6 +7,7 @@
 #include "GameplayTagContainer.h"
 #include "AuraPlayerController.generated.h"		// 虚幻自动生成的头文件（反射用）
 
+class UDamageTextComponent;
 // 提前声明类（避免重复包含，简化编译）
 class UInputMappingContext;		// 增强输入的“规则集”（告诉游戏：哪个按键对应哪个操作）
 class UInputAction;				// 输入动作（比如“移动”这个动作）
@@ -27,6 +28,9 @@ class AURA_API AAuraPlayerController : public APlayerController
 public:
 	AAuraPlayerController();				// 构造函数的“声明”（具体实现写在.cpp里）
 	virtual void PlayerTick(float DeltaTime) override;
+	
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
 protected:
 	// 重写虚幻自带的两个函数（相当于“修改父类的默认行为”）
 	virtual void BeginPlay() override;				//虚拟的 声明BeginPlaye()函数 覆盖，游戏开始时执行的函数
@@ -78,4 +82,7 @@ private:
 	TObjectPtr<USplineComponent> Spline;
 	
 	void AutoRun();
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 };
