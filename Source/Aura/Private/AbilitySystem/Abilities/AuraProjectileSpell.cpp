@@ -41,54 +41,56 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 		
 		//老师的程序
-		//const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 		
 		//调试-----------  1
-		UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
+		//UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
 		if (!SourceASC || !DamageEffectClass)
 		{
 			Projectile->FinishSpawning(SpawnTransform);
 			return;
 		}
-		//核心逻辑：创建伤害EffectSpec
-		FGameplayEffectContextHandle EffectContext = SourceASC->MakeEffectContext();
-		EffectContext.AddSourceObject(GetAvatarActorFromActorInfo());
 		
-		const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceASC->MakeEffectContext());
+		FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
+		//EffectContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
+		EffectContextHandle.SetAbility(this);
+		EffectContextHandle.AddSourceObject(Projectile);
+		TArray<TWeakObjectPtr<AActor>> Actors;
+		Actors.Add(Projectile);
+		EffectContextHandle.AddActors(Actors);
+		FHitResult HitResult;
+		HitResult.Location = ProjectileTargetLocation;
+		EffectContextHandle.AddHitResult(HitResult);
+		
+		const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
 		if (!SpecHandle.IsValid())
 		{
 			Projectile->FinishSpawning(SpawnTransform);
 			return;
 		}
 		
-		//const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();		//老师的程序
+		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();		//老师的程序
 		
 		// ========== 核心：设置动态伤害值，标准赋值，动态伤害 + 正确传参 ========== 	
-		const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
-		const float ScaledDamage = Damage.GetValueAtLevel(10);		//参数里是GetAbilityLevel()
-		FName DamageDataName = GameplayTags.Damage.GetTagName();
-		UAbilitySystemBlueprintLibrary::AssignSetByCallerMagnitude(SpecHandle, DamageDataName, ScaledDamage);
-		
-		FGameplayEffectSpec* Spec = SpecHandle.Data.Get();
-		if (Spec)
+		//const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+
+		for (auto& Pair : DamageTypes)
 		{
-			// 直接调用原生接口
-			Spec->SetSetByCallerMagnitude(GameplayTags.Damage, ScaledDamage);
+			const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
+			
+			// 方式1：蓝图库封装接口
+			//UAbilitySystemBlueprintLibrary::AssignSetByCallerMagnitude(SpecHandle, Pair.Key.GetTagName(), ScaledDamage);
+			
+			FGameplayEffectSpec* Spec = SpecHandle.Data.Get();
+			if (Spec)
+			{
+				// 方式2：GAS原生接口
+				Spec->SetSetByCallerMagnitude(Pair.Key, ScaledDamage);
+			}
 		}
-		
-		//老师的程序
-		//UAbilitySystemBlueprintLibrary::AssignSetByCallerMagnitude(SpecHandle,  GameplayTags.Damage.GetTagName(), ScaledDamage);
 		
 		Projectile->DamageEffectSpecHandle = SpecHandle;
 		
 		Projectile->FinishSpawning(SpawnTransform);
-		
 	}
-	// ========== 复制这里开始 ==========  调试—— 3
-	if (!DamageEffectClass)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("DamageEffectClass 未赋值！请检查蓝图配置"));
-		return;
-	}
-	
 }

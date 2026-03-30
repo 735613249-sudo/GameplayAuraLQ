@@ -30,7 +30,7 @@ public:
 	virtual void PlayerTick(float DeltaTime) override;
 	
 	UFUNCTION(Client, Reliable)
-	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit);
 protected:
 	// 重写虚幻自带的两个函数（相当于“修改父类的默认行为”）
 	virtual void BeginPlay() override;				//虚拟的 声明BeginPlaye()函数 覆盖，游戏开始时执行的函数
