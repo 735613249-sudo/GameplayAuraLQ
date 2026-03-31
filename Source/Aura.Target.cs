@@ -18,5 +18,6 @@ public class AuraTarget : TargetRules
 		bBuildEditor = true;
 		bCompileISPC = false;         // 禁用无用编译
 		bUsePCHFiles = true;          // 启用预编译头
+		
 	}
 }

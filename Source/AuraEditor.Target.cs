@@ -15,5 +15,10 @@ public class AuraEditorTarget : TargetRules
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_6;
 		bDebugBuildsActuallyUseDebugCRT = false;
 		
+		// ========== 极速编译核心 ==========
+		bUseUnityBuild = true;
+		bForceUnityBuild = true;
+		bUsePCHFiles = true;
+		// ==================================
 	}
 }
