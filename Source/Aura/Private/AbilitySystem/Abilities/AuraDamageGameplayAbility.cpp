@@ -1,6 +1,5 @@
 // Copyright Li Qian
 
-
 #include "AbilitySystem/Abilities/AuraDamageGameplayAbility.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
@@ -15,4 +14,14 @@ void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageSpecHandle, Pair.Key, ScaledDamage);
 	}
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+}
+
+FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const
+{
+	if (TaggedMontages.Num() > 0)
+	{
+		const int32 Selection = FMath::RandRange(0, TaggedMontages.Num() - 1);
+		return TaggedMontages[Selection];
+	}
+	return FTaggedMontage();
 }
