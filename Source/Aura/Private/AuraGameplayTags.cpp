@@ -91,32 +91,32 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	 */
 	
 	GameplayTags.InputTag_LMB = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("InputTag_LMB"), 
+		FName("InputTag.LMB"), 
 		FString("Input Tag for Left Mouse Button")
 		);
 	
 	GameplayTags.InputTag_RMB = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("InputTag_RMB"), 
+		FName("InputTag.RMB"), 
 		FString("Input Tag for Right Mouse Button")
 		);
 	
 	GameplayTags.InputTag_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("InputTag_1"), 
+		FName("InputTag.1"), 
 		FString("Input Tag for 1 key")
 		);
 	
 	GameplayTags.InputTag_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("InputTag_2"), 
+		FName("InputTag.2"), 
 		FString("Input Tag for 2 key")
 		);
 	
 	GameplayTags.InputTag_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("InputTag_3"), 
+		FName("InputTag.3"), 
 		FString("Input Tag for 3 key")
 		);
 	
 	GameplayTags.InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("InputTag_4"), 
+		FName("InputTag.4"), 
 		FString("Input Tag for 4 key")
 		);
 	
@@ -201,6 +201,15 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Fire.FireBolt"), 
 		FString("FireBolt Ability Tag")
+		);
+	
+	/*
+	 * Cooldown
+	 */
+	
+	GameplayTags.Cooldown_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Fire.FireBolt"), 
+		FString("FireBolt Cooldown Tag")
 		);
 	
 	/*
