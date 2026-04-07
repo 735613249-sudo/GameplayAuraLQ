@@ -23,6 +23,8 @@ AAuraCharacter::AAuraCharacter()		// 实现构造函数，初始化角色移动�
 	bUseControllerRotationPitch = false;		// 角色俯仰旋转（抬头/低头）不跟随控制器
 	bUseControllerRotationRoll = false;			// 角色翻滚旋转不跟随控制器
 	bUseControllerRotationYaw = false;			// 角色偏航旋转（左右转）不跟随控制器（交由移动方向控制）
+	
+	CharacterClass = ECharacterClass::Elementalist;
 }
 
 void AAuraCharacter::PossessedBy(AController* NewController)
