@@ -9,10 +9,26 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Player/AuraPlayerController.h"
 #include "Player/AuraPlayerState.h"
+#include "NiagaraComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "UI/HUD/AuraHUD.h"
 
 AAuraCharacter::AAuraCharacter()		// 实现构造函数，初始化角色移动和旋转行为
 {
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
+	CameraBoom->SetupAttachment(GetRootComponent());
+	CameraBoom->SetUsingAbsoluteRotation(true);
+	CameraBoom->bDoCollisionTest = false;
+	
+	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>("TopDownCameraComponent");
+	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	TopDownCameraComponent->bUsePawnControlRotation = false;
+	
+	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("LevelUpNiagaraComponent");
+	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
+	LevelUpNiagaraComponent->bAutoActivate = false;
+	
 	// 1. 移动组件配置：GetCharacterMovement()返回ACharacter的核心移动组件（CharacterMovementComponent）
 	GetCharacterMovement()->bOrientRotationToMovement = true;			// 角色旋转自动朝向移动方向（而非固定朝向控制器视角）
 	// 旋转速率：仅Yaw（偏航，左右转）为400度/秒，Pitch（俯仰）、Roll（翻滚）为0（禁止上下/翻滚旋转）
@@ -54,7 +70,19 @@ void AAuraCharacter::AddToXP_Implementation(int32 InXp)
 
 void AAuraCharacter::LevelUp_Implementation()
 {
-	
+	MulticastLevelUpParticles();
+}
+
+void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
+{
+	if (IsValid(LevelUpNiagaraComponent))
+	{
+		const FVector CameraLocation = TopDownCameraComponent->GetComponentLocation();
+		const FVector NiagaraSystemLocation = LevelUpNiagaraComponent->GetComponentLocation();
+		const FRotator ToCameraRotation = (CameraLocation - NiagaraSystemLocation).Rotation();
+		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);
+		LevelUpNiagaraComponent->Activate(true);
+	}
 }
 
 int32 AAuraCharacter::GetXP_Implementation() const
@@ -127,3 +155,4 @@ void AAuraCharacter::InitAbilityActorInfo()
 	}
 	InitializeDefaultAttributes();
 }
+
